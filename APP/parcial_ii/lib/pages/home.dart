@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:parcial_ii/exports.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   @override
@@ -10,6 +11,31 @@ class _HomeState extends State<Home> {
   String? _title;
   String? _message;
   String? _recipient;
+  String? _token;
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging.instance.getToken().then((token) {
+      setState(() {
+        _token = token;
+      });
+    });
+  }
+
+  Future<void> sendToken() async {
+    final response = await http.post(
+        Uri.parse("http://192.168.1.8/backend/registerDivide.php"),
+        body: {
+          'DISPO': _token,
+          'ID': 1.toString(),
+        });
+    if (response.statusCode == 200) {
+      // procesar la respuesta del script PHP
+    } else {
+      throw Exception('Error al enviar los datos');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,70 +45,14 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.blueGrey[900],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Título',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Por favor ingrese un título';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _title = value;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Mensaje',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Por favor ingrese un mensaje';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _message = value;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Destinatario',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Por favor ingrese un destinatario';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _recipient = value;
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      // Envía el formulario
-                    }
-                  },
-                  child: const Text('Enviar'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+          padding: const EdgeInsets.all(16.0),
+          child: ElevatedButton(
+            onPressed: () {
+              sendToken();
+              print(_token);
+            },
+            child: const Text("Registrar"),
+          )),
     );
   }
 }

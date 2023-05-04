@@ -1,7 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:parcial_ii/pages/home.dart';
+import 'package:parcial_ii/exports.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  /* String? token = await FirebaseMessaging.instance.getToken();
+  String tokenSaved = getSharedPreferences(name: "SP_FILE", mode: 0)
+      .getString(key: "DISPO", defValue: null);
+  if (token != null) {
+    if (tokenSaved != null || token != tokenSaved) {}
+  } */
   runApp(const MyApp());
 }
 
