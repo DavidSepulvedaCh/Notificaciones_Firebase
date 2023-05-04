@@ -1,7 +1,10 @@
 <?php
 
 include_once 'headers.php';
+require __DIR__.'/vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 class SendNotificationsResp
 {

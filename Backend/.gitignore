@@ -1,1 +1,4 @@
+composer.json
+composer.lock
+vendor
 .env
