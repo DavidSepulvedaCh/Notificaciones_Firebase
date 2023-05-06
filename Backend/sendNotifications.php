@@ -1,99 +1,92 @@
 <?php
 
 include_once 'headers.php';
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-class SendNotificationsResp
+
+class SendNotifications
 {
-    public $code = '';
-    public $message = '';
+    public $code = "";
+    public $message = "";
 }
 
-$resp = new SendNotificationsResp;
-$resp->code = 'OK';
-$resp->message = 'Message success';
+$resp = new SendNotifications;
 
-try {
-    if (isset($_POST['ID'], $_POST['TITLE'], $_POST['MESSAGE'])) {
-        if (!isset($_POST['ID'], $_POST['TITLE'], $_POST['MESSAGE'])) {
-            $resp->code = 'Err';
-            $resp->message = 'Missing parameters';
-            throw new Exception('Missing parameters');
-        }
+if (!isset($_POST['ID'], $_POST['TITLE'], $_POST['MESSAGE'])) {
+    $resp->code = "ERR";
+    $resp->message = "Faltan campos";
+    echo json_encode($resp);
+    exit;
+}
 
-        $id = $_POST['ID'];
-        $TITLE = $_POST['TITLE'];
-        $messageNotification = $_POST['MESSAGE'];
+$id = $_POST['ID'];
+$title = $_POST['TITLE'];
+$message = $_POST['MESSAGE'];
 
-        // DB CONNECT
-        $mysqli = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME']);
+if ($id === "" || $title === "" || $message === "") {
+    $resp->code = "ERR";
+    $resp->message = "Faltan parametro";
+    echo json_encode($resp);
+    exit;
+}
 
-        // SEARCH IN DB
-        $ids = array();
-        $data = array();
+$ids = [];
+$notification = [
+    "title" => $title,
+    "body" => $message
+];
 
-        $consult = mysqli_prepare($mysqli, 'SELECT DISPO FROM DIVICES WHERE ID = ?');
-        mysqli_stmt_bind_param($consult, 'i', $id);
-        mysqli_stmt_execute($consult);
+//busco en la DB el id
+$mysqli = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME']);
 
-        $rta = mysqli_stmt_get_result($consult);
-        while ($row = mysqli_fetch_assoc($rta)) {
-            if ($row['DISPO'] != null) {
-                $ids[] = $row['DISPO'];
-            }
-        }
-        $consult->close();
-
-        // PARAMETERS VALIDATION
-        if (empty($ids)) {
-            $resp->code = 'Error!!';
-            $resp->message = 'No devices found';
-        }
-
-        $notifications = array();
-        $notifications["TITLE"] = $title;
-        $notifications["BODY"] = $messageNotification;
-
-        $fields = array(
-            'ids' => $ids,
-            'notification' => $notifications,
-            'direct_book_ok' => true
-        );
-
-        //API KEY SERVER FIREBASE
-        $serverURL = $_ENV['SERVER_API'];
-
-        //HEADER FOR REQUESTS // API KEY OF FCM
-        $headers = array("authorization: key=" . $_ENV['FCM_API'] . "", "content-type: application/json");
-
-        //CURL CONNECTION FOR REQUESTS
-        $connectCURL = curl_init();
-
-        //PARAMETERS OF RESQ
-        curl_setopt($connectCURL, CURLOPT_URL, $serverURL);
-        curl_setopt($connectCURL, CURLOPT_POST, true);
-        curl_setopt($connectCURL, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($connectCURL, CURLOPT_RETURNTRANSFER, true);
-
-        //It is set to false because we are in development environment
-        curl_setopt($connectCURL, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($connectCURL, CURLOPT_POSTFIELDS, json_encode($fields));
-
-        $result = curl_exec($connectCURL);
-        if ($result === false) {
-            // die('Curl failed: ' . curl_error($ch));
-        }
-        curl_close($connectCURL);
-    } else {
-        $resp->code = "Error";
-        $resp->message = "Missing data";
+$consulta = $mysqli->prepare("SELECT DISPO FROM DIVICES WHERE ID = ?");
+$consulta->bind_param("i", $id);
+$consulta->execute();
+$resultado = $consulta->get_result();
+while ($fila = mysqli_fetch_assoc($resultado)) {
+    if ($fila["DISPO"] !== null) {
+        $ids[] = $fila["DISPO"];
     }
-} catch (Exception $e) {
-    echo 'Error: ' . $e->getMessage();
 }
 
-$jsonI = json_encode($resp);
-echo $jsonI;
+$consulta->close();
+$mysqli->close();
+
+$fields = [
+    'registration_ids' => $ids,
+    'notification' => $notification,
+    //'data' => $datos,
+    'direct_book_ok' => true
+];
+
+$url = 'https://fcm.googleapis.com/fcm/send';
+$headers = [
+    "authorization: key=" . $_ENV['FCM_API'],
+    "content-type: application/json"
+];
+
+$ch = curl_init();
+curl_setopt_array($ch, [
+    CURLOPT_URL => $url,
+    CURLOPT_POST => true,
+    CURLOPT_HTTPHEADER => $headers,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_SSL_VERIFYPEER => false,
+    CURLOPT_POSTFIELDS => json_encode($fields)
+]);
+$result = curl_exec($ch);
+curl_close($ch);
+
+if ($result === false) {
+    $resp->code = "ERR";
+    $resp->message = "Error";
+} else {
+    $resp->code = "OK";
+    $resp->message = "Enviado correctamente";
+}
+
+echo json_encode($resp);
+?>

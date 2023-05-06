@@ -20,9 +20,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'FoodHub',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/register',
       routes: {
         '/': (context) => Home(),
+        '/register': (context) => Register(),
       },
     );
   }
