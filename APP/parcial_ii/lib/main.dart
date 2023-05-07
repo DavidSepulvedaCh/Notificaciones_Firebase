@@ -3,12 +3,6 @@ import 'package:parcial_ii/exports.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  /* String? token = await FirebaseMessaging.instance.getToken();
-  String tokenSaved = getSharedPreferences(name: "SP_FILE", mode: 0)
-      .getString(key: "DISPO", defValue: null);
-  if (token != null) {
-    if (tokenSaved != null || token != tokenSaved) {}
-  } */
   runApp(const MyApp());
 }
 
@@ -22,8 +16,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/register',
       routes: {
-        '/': (context) => Home(),
-        '/register': (context) => Register(),
+        '/': (context) => const Home(),
+        '/register': (context) => const Register(),
       },
     );
   }

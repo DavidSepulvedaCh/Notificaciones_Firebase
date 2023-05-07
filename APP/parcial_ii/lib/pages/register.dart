@@ -1,17 +1,73 @@
-import 'package:flutter/material.dart';
+import '../exports.dart';
 
 class Register extends StatefulWidget {
+  const Register({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterState createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
 
-  late String _name;
-  late String _email;
-  late String _password;
-  late String _image = "ded";
+  late String? _name;
+  late String? _email;
+  late String? _cargo;
+  late String? _token;
+  late String? _password;
+  final String _image = "https://bit.ly/3VFd1jO";
+  late String? _phone;
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging.instance.getToken().then((token) {
+      setState(() {
+        _token = token;
+      });
+    });
+  }
+
+  void _showSuccessDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Registro exitoso"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error en el registro"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +75,15 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(
         title: const Text('Registro de usuario'),
         backgroundColor: Colors.blue[900],
+        leading: IconButton(
+          icon: Icon(Icons.next_plan),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Home()),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -49,6 +114,18 @@ class _RegisterState extends State<Register> {
                 onSaved: (value) => _name = value!,
               ),
               TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Numero telefonico',
+                ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor ingrese su numero telefonico';
+                  }
+                  return null;
+                },
+                onSaved: (value) => _phone = value!,
+              ),
+              TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   labelText: 'Correo electrónico',
@@ -63,6 +140,18 @@ class _RegisterState extends State<Register> {
                   return null;
                 },
                 onSaved: (value) => _email = value!,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Cargo',
+                ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor ingrese su cargo actual';
+                  }
+                  return null;
+                },
+                onSaved: (value) => _cargo = value!,
               ),
               TextFormField(
                 obscureText: true,
@@ -83,10 +172,28 @@ class _RegisterState extends State<Register> {
               const SizedBox(height: 16),
               ElevatedButton(
                 child: const Text('Registrarse'),
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    // agregar código para enviar los datos mediante un post
+                    final registerData = RegisterModel(
+                      name: _name,
+                      email: _email,
+                      phone: _phone,
+                      cargo: _cargo,
+                      image: _image,
+                      password: _password,
+                      token: _token,
+                    );
+                    RegisterController().register(registerData).then((result) {
+                      if (result['status'] == 'success') {
+                        _showSuccessDialog(result['message']!);
+                      } else {
+                        _showErrorDialog(result['message']!);
+                      }
+                    }).catchError((error) {
+                      // Manejar el error
+                      print(error.toString());
+                    });
                   }
                 },
               ),

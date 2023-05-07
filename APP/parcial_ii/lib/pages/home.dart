@@ -1,39 +1,33 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
 import 'package:parcial_ii/exports.dart';
-import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final _formKey = GlobalKey<FormState>();
-  String? _title;
-  String? _message;
-  String? _recipient;
-  String? _token;
+  late List<UserModel> _users = [];
 
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging.instance.getToken().then((token) {
-      setState(() {
-        _token = token;
-      });
-    });
+    _loadUsers();
   }
 
-  Future<void> sendToken() async {
-    final response = await http.post(
-        Uri.parse("http://192.168.1.8/backend/registerDivide.php"),
-        body: {
-          'DISPO': _token,
-          'ID': 1.toString(),
-        });
-    if (response.statusCode == 200) {
-      // procesar la respuesta del script PHP
-    } else {
-      throw Exception('Error al enviar los datos');
+  Future<void> _loadUsers() async {
+    final getUsers = GetUsers();
+    try {
+      final getUsers = GetUsers();
+      final users = await getUsers.getUsers();
+      setState(() {
+        _users = users;
+      });
+    } catch (error) {
+      print(error);
     }
   }
 
@@ -41,18 +35,29 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Formulario'),
-        backgroundColor: Colors.blueGrey[900],
+        title: const Text('Usuarios'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.next_plan),
+            onPressed: (() {
+              print(_users[5].id);
+            }),
+          )
+        ],
       ),
-      body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton(
-            onPressed: () {
-              sendToken();
-              print(_token);
-            },
-            child: const Text("Registrar"),
-          )),
+      body: ListView.builder(
+        itemCount: _users.length,
+        itemBuilder: (context, index) {
+          final user = _users[index];
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(user.photo),
+            ),
+            title: Text(user.name),
+            subtitle: Text(user.email),
+          );
+        },
+      ),
     );
   }
 }
