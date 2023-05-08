@@ -18,7 +18,7 @@ class _RegisterState extends State<Register> {
   late String? _password;
   final String _image = "https://bit.ly/3VFd1jO";
   late String? _phone;
-
+  late String? tk;
   @override
   void initState() {
     super.initState();
@@ -40,7 +40,7 @@ class _RegisterState extends State<Register> {
             TextButton(
               child: const Text("OK"),
               onPressed: () {
-                Navigator.of(context).pop();
+                print(tk);
               },
             ),
           ],
@@ -188,6 +188,9 @@ class _RegisterState extends State<Register> {
                     RegisterController().register(registerData).then((result) {
                       if (result['status'] == 'success') {
                         _showSuccessDialog(result['message']!);
+                        setState(() {
+                          tk = result['tk'];
+                        });
                       } else {
                         _showErrorDialog(result['message']!);
                       }

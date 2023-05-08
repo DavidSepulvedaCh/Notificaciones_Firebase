@@ -20,7 +20,11 @@ class RegisterController {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['code'] == "OK") {
-        return {'status': 'success', 'message': data['message']};
+        return {
+          'status': 'success',
+          'message': data['message'],
+          'token': data['tk']
+        };
       } else {
         return {'status': 'error', 'message': data['message']};
       }

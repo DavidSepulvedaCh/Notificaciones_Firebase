@@ -2,54 +2,50 @@ import 'package:flutter/material.dart';
 
 class ChatHeader extends StatelessWidget {
   final String name;
-  final String status;
+  final String email;
   final String imageUrl;
 
   const ChatHeader({
     Key? key,
     required this.name,
-    required this.status,
+    required this.email,
     required this.imageUrl,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         CircleAvatar(
-          backgroundImage: NetworkImage(
-            imageUrl,
-          ),
-          radius: 20.0,
+          backgroundImage: NetworkImage(imageUrl),
         ),
         const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.bold,
-                ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              const SizedBox(height: 4.0),
-              Row(
-                children: [
-                  Text(
-                    status,
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                      color: Color.fromARGB(255, 211, 211, 211),
-                    ),
-                  ),
-                ],
+            ),
+            Text(
+              email,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );

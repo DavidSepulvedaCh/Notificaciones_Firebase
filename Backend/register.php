@@ -10,6 +10,7 @@ class RegisterUser
 {
     public $code = "";
     public $message = "";
+    public $tk = "";
 }
 
 $resp = new RegisterUser;
@@ -79,6 +80,15 @@ if (!empty($_POST['email_usuario']) && !empty($_POST['token_fcm'])) {
                 if ($mysqli->query($sql) === TRUE) {
                     $resp->code = "OK";
                     $resp->message = "Dispositivo registrado correctamente";
+                    $payload = [
+                        "user_id" => $usuario_id,
+                        "username" => $nombre,
+                        "exp" => time() + 3600
+                    ];
+                    $alg = 'HS256';
+                    $key_token = $_ENV['TOKEN_KEY'];
+                    $jwt = \Firebase\JWT\JWT::encode($payload, $key_token, $alg);
+                    $resp->tk = $jwt;
                 } else {
                     $resp->code = "Error";
                     $resp->message = "Error al registrar dispositivo: " . $mysqli->error;

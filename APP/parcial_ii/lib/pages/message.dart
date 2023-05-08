@@ -30,7 +30,7 @@ class _SendMessageViewState extends State<SendMessageView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Registro exitoso"),
+          title: const Text("Envio exitoso"),
           content: Text(message),
           actions: [
             TextButton(
@@ -50,7 +50,7 @@ class _SendMessageViewState extends State<SendMessageView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Error en el registro"),
+          title: const Text("Error en el envio del mensaje"),
           content: Text(message),
           actions: [
             TextButton(
@@ -69,10 +69,11 @@ class _SendMessageViewState extends State<SendMessageView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: ChatHeader(
           name: _user.name,
           imageUrl: _user.photo,
-          status: _user.email,
+          email: _user.email,
         ),
         backgroundColor: const Color.fromARGB(255, 8, 44, 107),
       ),
@@ -81,7 +82,6 @@ class _SendMessageViewState extends State<SendMessageView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_user.name),
             TextFormField(
               decoration: const InputDecoration(
                 labelText: 'Título',
@@ -119,11 +119,12 @@ class _SendMessageViewState extends State<SendMessageView> {
             ), */
             const SizedBox(height: 32),
             Center(
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: () {
                   _sendButtonPressed();
                 },
-                child: const Text('Enviar'),
+                icon: const Icon(Icons.send),
+                label: const Text('Enviar'),
               ),
             ),
           ],
