@@ -9,3 +9,6 @@ export 'package:parcial_ii/controllers/register_controller.dart';
 export 'package:parcial_ii/controllers/send_token.dart';
 export 'package:parcial_ii/models/user_model.dart';
 export 'package:parcial_ii/controllers/get_users.dart';
+export 'package:parcial_ii/controllers/sed_message.dart';
+export 'package:parcial_ii/pages/message.dart';
+export 'package:parcial_ii/widgets/chat_header.dart';

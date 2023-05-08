@@ -19,7 +19,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _loadUsers() async {
-    final getUsers = GetUsers();
+    //final getUsers = GetUsers();
     try {
       final getUsers = GetUsers();
       final users = await getUsers.getUsers();
@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
           IconButton(
             icon: const Icon(Icons.next_plan),
             onPressed: (() {
-              print(_users[5].id);
+              print(_users);
             }),
           )
         ],
@@ -49,12 +49,24 @@ class _HomeState extends State<Home> {
         itemCount: _users.length,
         itemBuilder: (context, index) {
           final user = _users[index];
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(user.photo),
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SendMessageView(
+                    user: user,
+                  ),
+                ),
+              );
+            },
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(user.photo),
+              ),
+              title: Text(user.name),
+              subtitle: Text(user.email),
             ),
-            title: Text(user.name),
-            subtitle: Text(user.email),
           );
         },
       ),

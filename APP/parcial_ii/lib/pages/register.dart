@@ -34,11 +34,11 @@ class _RegisterState extends State<Register> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Registro exitoso"),
+          title: const Text("Registro exitoso"),
           content: Text(message),
           actions: [
             TextButton(
-              child: Text("OK"),
+              child: const Text("OK"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -54,7 +54,7 @@ class _RegisterState extends State<Register> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Error en el registro"),
+          title: const Text("Error en el registro"),
           content: Text(message),
           actions: [
             TextButton(
@@ -76,8 +76,9 @@ class _RegisterState extends State<Register> {
         title: const Text('Registro de usuario'),
         backgroundColor: Colors.blue[900],
         leading: IconButton(
-          icon: Icon(Icons.next_plan),
+          icon: const Icon(Icons.next_plan),
           onPressed: () {
+            print(_token);
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const Home()),
