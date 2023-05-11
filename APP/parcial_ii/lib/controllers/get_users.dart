@@ -4,11 +4,8 @@ import 'package:http/http.dart' as http;
 
 class GetUsers {
   Future<List<UserModel>> getUsers() async {
-    final response =
-        await http.get(Uri.parse("http://10.153.50.87/backend/getUsers.php"));
-    print(response);
-    print(response.statusCode);
-    print(response.body);
+    Uri url = Uri.http(Params.api, Params.getUsersURL);
+    final response = await http.get(url);
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       List<UserModel> users =

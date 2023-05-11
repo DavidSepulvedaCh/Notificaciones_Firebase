@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import '../exports.dart';
 
 class Register extends StatefulWidget {
@@ -81,7 +83,11 @@ class _RegisterState extends State<Register> {
             print(_token);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Home()),
+              MaterialPageRoute(
+                builder: (context) => Home(
+                  userLoged: _email!,
+                ),
+              ),
             );
           },
         ),

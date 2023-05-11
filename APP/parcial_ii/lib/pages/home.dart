@@ -3,7 +3,9 @@
 import 'package:parcial_ii/exports.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final String userLoged;
+
+  const Home({Key? key, required this.userLoged}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -11,11 +13,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late List<UserModel> _users = [];
+  late String _userLoged;
 
   @override
   void initState() {
     super.initState();
     _loadUsers();
+    _userLoged = widget.userLoged;
   }
 
   Future<void> _loadUsers() async {
@@ -56,6 +60,7 @@ class _HomeState extends State<Home> {
                 MaterialPageRoute(
                   builder: (context) => SendMessageView(
                     user: user,
+                    rem: _userLoged,
                   ),
                 ),
               );

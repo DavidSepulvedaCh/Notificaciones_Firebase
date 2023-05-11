@@ -1,12 +1,11 @@
 // ignore_for_file: library_private_types_in_public_api
-
-import 'package:flutter/material.dart';
 import 'package:parcial_ii/exports.dart';
 import 'package:parcial_ii/models/message_model.dart';
 
 class SendMessageView extends StatefulWidget {
   final UserModel user;
-  const SendMessageView({super.key, required this.user});
+  final String rem;
+  const SendMessageView({super.key, required this.user, required this.rem});
 
   @override
   _SendMessageViewState createState() => _SendMessageViewState();
@@ -14,6 +13,7 @@ class SendMessageView extends StatefulWidget {
 
 class _SendMessageViewState extends State<SendMessageView> {
   late UserModel _user;
+  late String remitente;
 
   String _title = "";
   String _message = "";
@@ -23,6 +23,7 @@ class _SendMessageViewState extends State<SendMessageView> {
   void initState() {
     super.initState();
     _user = widget.user;
+    remitente = widget.rem;
   }
 
   void _showSuccessDialog(String message) {
@@ -106,17 +107,6 @@ class _SendMessageViewState extends State<SendMessageView> {
               },
             ),
             const SizedBox(height: 16),
-            /* TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Dispositivos',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _devices = value;
-                });
-              },
-            ), */
             const SizedBox(height: 32),
             Center(
               child: ElevatedButton.icon(
@@ -137,7 +127,7 @@ class _SendMessageViewState extends State<SendMessageView> {
     final messageData = MessageModel(
         title: _title,
         body: _message,
-        emailRem: "prueba@mail.com",
+        emailRem: remitente,
         emailRes: _user.email,
         idRes: _user.id);
     SendMessage().sendMessage(messageData).then((result) {

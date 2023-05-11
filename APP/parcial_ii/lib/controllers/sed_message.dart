@@ -6,8 +6,8 @@ import 'package:parcial_ii/models/message_model.dart';
 
 class SendMessage {
   Future<Map<String, String>> sendMessage(MessageModel messageData) async {
-    final response = await http
-        .post(Uri.parse("http://10.153.50.87/backend/sendMessage.php"), body: {
+    Uri url = Uri.http(Params.api, Params.messageURL);
+    final response = await http.post(url, body: {
       'EMAIL_REM': messageData.emailRem,
       'EMAIL_RES': messageData.emailRes,
       'TITLE': messageData.title,

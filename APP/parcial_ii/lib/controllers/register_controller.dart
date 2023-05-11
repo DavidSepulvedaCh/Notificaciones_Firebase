@@ -4,8 +4,9 @@ import 'package:http/http.dart' as http;
 
 class RegisterController {
   Future<Map<String, String>> register(RegisterModel registerData) async {
+    Uri url = Uri.http(Params.api, Params.registerURL);
     final response = await http.post(
-      Uri.parse("http://10.153.50.87/backend/registerUser.php"),
+      url,
       body: {
         'nombre_completo': registerData.name,
         'email_usuario': registerData.email,
