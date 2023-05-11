@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print
 import 'package:parcial_ii/exports.dart';
 import 'package:parcial_ii/models/message_model.dart';
 
@@ -17,7 +17,6 @@ class _SendMessageViewState extends State<SendMessageView> {
 
   String _title = "";
   String _message = "";
-  String _devices = "";
 
   @override
   void initState() {
@@ -137,7 +136,6 @@ class _SendMessageViewState extends State<SendMessageView> {
         _showErrorDialog(result['message']!);
       }
     }).catchError((error) {
-      // Manejar el error
       print(error.toString());
     });
   }

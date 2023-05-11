@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:parcial_ii/exports.dart';
 
 class LoginController {
-  Future<LoginResponse> login(LoginModel loginData) async {
+  Future<Map<String, dynamic>> login(LoginModel loginData) async {
     Uri url = Uri.http(Params.api, Params.loginURL);
     final response = await http.post(url, body: {
       'email_usuario': loginData.email,
@@ -11,14 +11,20 @@ class LoginController {
     });
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final loginRespModel = LoginRespModel.fromJson(data['loginRespModel']);
-      final loginResponse = LoginResponse(
-        loginRespModel: loginRespModel,
-        code: data['code'],
-        message: data['message'],
-      );
-      return loginResponse;
+      Map<String, dynamic> data = jsonDecode(response.body);
+      if (data['code'] == "OK") {
+        LoginRespModel respModel =
+            LoginRespModel.fromJson(data['loginRespModel']);
+        await Shared.setLogginDetails(respModel);
+        return {
+          'status': 'success',
+          'message': data['message'],
+          'token': data['tk'],
+          'respModel': respModel,
+        };
+      } else {
+        return {'status': 'error', 'message': data['message']};
+      }
     } else {
       throw Exception('Error al enviar los datos');
     }

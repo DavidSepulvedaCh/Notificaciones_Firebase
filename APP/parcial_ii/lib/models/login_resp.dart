@@ -1,14 +1,4 @@
-class LoginResponse {
-  LoginRespModel loginRespModel;
-  String code;
-  String message;
-
-  LoginResponse({
-    required this.loginRespModel,
-    required this.code,
-    required this.message,
-  });
-}
+import 'dart:convert';
 
 class LoginRespModel {
   String? id;
@@ -19,15 +9,14 @@ class LoginRespModel {
   String? token;
   String? tel;
 
-  LoginRespModel({
-    this.id,
-    this.name,
-    this.email,
-    this.photo,
-    this.role,
-    this.token,
-    this.tel,
-  });
+  LoginRespModel(
+      {this.id,
+      this.name,
+      this.email,
+      this.photo,
+      this.role,
+      this.token,
+      this.tel});
 
   LoginRespModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

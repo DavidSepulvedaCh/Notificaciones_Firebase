@@ -11,7 +11,19 @@ class LoginUser
     public $code = "";
     public $message = "";
     public $tk = "";
-    public $loginRespModel = [];
+    public $loginRespModel;
+}
+
+class LoginRespModel
+{
+    public $id;
+    public $name;
+    public $email;
+    public $photo;
+    public $role;
+    public $tel;
+    public $token;
+
 }
 
 $resp = new LoginUser;
@@ -56,6 +68,7 @@ if (!empty($_POST['email_usuario']) && !empty($_POST['clave'])) {
                 "username" => $nombre,
                 "exp" => time() + 3600
             ];
+
             $alg = 'HS256';
             $key_token = $_ENV['TOKEN_KEY'];
             $jwt = \Firebase\JWT\JWT::encode($payload, $key_token, $alg);
@@ -63,16 +76,16 @@ if (!empty($_POST['email_usuario']) && !empty($_POST['clave'])) {
             $resp->message = "Inicio de sesión exitoso";
             $resp->tk = $jwt;
 
-            $loginRespModel = array(
-                "id" => $row["id"],
-                "name" => $row["nombre_completo"],
-                "email" => $row["email"],
-                "photo" => $row["foto"],
-                "role" => $row["cargo"],
-                "tel" => $row["numero_telefonico"],
-                "token" => $jwt
-            );
+            $loginRespModel = new LoginRespModel();
+            $loginRespModel->id = $row["id"];
+            $loginRespModel->name = $row["nombre_completo"];
+            $loginRespModel->email = $row["email"];
+            $loginRespModel->photo = $row["foto"];
+            $loginRespModel->role = $row["cargo"];
+            $loginRespModel->tel = $row["numero_telefonico"];
+            $loginRespModel->token = $jwt;
             $resp->loginRespModel = $loginRespModel;
+
         } else {
             // Contraseña incorrecta
             $resp->code = "Error";

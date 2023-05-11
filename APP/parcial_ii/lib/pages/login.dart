@@ -14,24 +14,6 @@ class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
 
-  void _showSuccessDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Login exitoso"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {},
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -97,22 +79,28 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
+
                       final loginData = LoginModel(
                         email: _email,
                         password: _password,
                       );
-                      try {
-                        final result = await LoginController().login(loginData);
-                        //_showSuccessDialog(result.message);
-                        Navigator.push(
+                      Map<String, dynamic> rta =
+                          await LoginController().login(loginData);
+                      if (rta['status'] == 'success') {
+                        SharedPreferences pref = Shared.storageSahred;
+                        String? valor = pref.getString('token');
+                        print(valor);
+                        //LoginRespModel respModel = rta['respModel'];
+                        /* Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Home(
-                                    userLoged: _email,
-                                  )),
-                        );
-                      } catch (error) {
-                        _showErrorDialog(error.toString());
+                            builder: (context) => Home(
+                              userLoged: _email,
+                            ),
+                          ),
+                        ); */
+                      } else {
+                        _showErrorDialog(rta['message']);
                       }
                     }
                   },
