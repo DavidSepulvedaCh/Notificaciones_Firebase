@@ -17,3 +17,7 @@ export 'package:parcial_ii/models/login_req.dart';
 export 'package:parcial_ii/models/login_resp.dart';
 export 'package:parcial_ii/controllers/login_controller.dart';
 export 'package:parcial_ii/config.dart';
+export 'package:parcial_ii/widgets/aviso_login.dart';
+export 'package:parcial_ii/widgets/aviso_register.dart';
+export 'package:parcial_ii/widgets/dialogs.dart';
+export 'package:parcial_ii/widgets/btn_login.dart';

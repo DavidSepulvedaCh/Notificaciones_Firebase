@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print
+// ignore_for_file: library_private_types_in_public_api, avoid_print, sort_child_properties_last
 import 'package:parcial_ii/exports.dart';
 import 'package:parcial_ii/models/message_model.dart';
 
@@ -14,6 +14,7 @@ class SendMessageView extends StatefulWidget {
 class _SendMessageViewState extends State<SendMessageView> {
   late UserModel _user;
   late String remitente;
+  bool _changedText = false;
 
   String _title = "";
   String _message = "";
@@ -82,39 +83,62 @@ class _SendMessageViewState extends State<SendMessageView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Título',
-                border: OutlineInputBorder(),
+            Text(
+              "Cargo: ${_user.cargo} - Telefono: ${_user.phone}",
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w300),
+            ),
+            const SizedBox(height: 15),
+            const Center(
+              child: Text(
+                "Envia un mensaje!",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w300),
               ),
+            ),
+            const SizedBox(height: 15),
+            TextFormField(
               onChanged: (value) {
                 setState(() {
                   _title = value;
                 });
               },
+              decoration: const InputDecoration(
+                labelText: 'Título',
+                border: OutlineInputBorder(),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                isCollapsed: true,
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Mensaje',
-                border: OutlineInputBorder(),
-              ),
               onChanged: (value) {
                 setState(() {
                   _message = value;
+                  _changedText = true;
                 });
               },
-            ),
-            const SizedBox(height: 16),
-            const SizedBox(height: 32),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  _sendButtonPressed();
-                },
-                icon: const Icon(Icons.send),
-                label: const Text('Enviar'),
+              decoration: InputDecoration(
+                labelText: 'Mensaje',
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 15.0),
+                isCollapsed: true,
+                suffixIcon: Visibility(
+                  child: IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () {
+                      _sendButtonPressed();
+                    },
+                  ),
+                  visible: _changedText,
+                ),
               ),
+              maxLines: 3,
+              minLines: 1,
             ),
           ],
         ),

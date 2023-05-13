@@ -11,6 +11,19 @@ class RegisterUser
     public $code = "";
     public $message = "";
     public $tk = "";
+    public $loginRespModel;
+}
+
+class LoginRespModel
+{
+    public $id;
+    public $name;
+    public $email;
+    public $photo;
+    public $role;
+    public $tel;
+    public $token;
+
 }
 
 $resp = new RegisterUser;
@@ -89,6 +102,17 @@ if (!empty($_POST['email_usuario']) && !empty($_POST['token_fcm'])) {
                     $key_token = $_ENV['TOKEN_KEY'];
                     $jwt = \Firebase\JWT\JWT::encode($payload, $key_token, $alg);
                     $resp->tk = $jwt;
+
+                    $loginRespModel = new LoginRespModel();
+                    $loginRespModel->id = strval($usuario_id);
+                    $loginRespModel->name = $nombre;
+                    $loginRespModel->email = $email;
+                    $loginRespModel->photo = $foto;
+                    $loginRespModel->role = $cargo;
+                    $loginRespModel->tel = $telefono;
+                    $loginRespModel->token = $jwt;
+                    $resp->loginRespModel = $loginRespModel;
+
                 } else {
                     $resp->code = "Error";
                     $resp->message = "Error al registrar dispositivo: " . $mysqli->error;

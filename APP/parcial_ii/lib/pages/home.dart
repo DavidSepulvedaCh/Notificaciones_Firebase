@@ -40,11 +40,13 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Usuarios'),
+        backgroundColor: const Color.fromARGB(255, 8, 44, 107),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.next_plan),
-            onPressed: (() {
-              print(_users);
+            icon: const Icon(Icons.logout_outlined),
+            onPressed: (() async {
+              await Shared.printLogginDetails();
             }),
           )
         ],
@@ -53,26 +55,31 @@ class _HomeState extends State<Home> {
         itemCount: _users.length,
         itemBuilder: (context, index) {
           final user = _users[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SendMessageView(
-                    user: user,
-                    rem: _userLoged,
+          if (user.name == widget.userLoged || user.email == widget.userLoged) {
+            // Exclude the currently logged-in user from the list
+            return Container();
+          } else {
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SendMessageView(
+                      user: user,
+                      rem: _userLoged,
+                    ),
                   ),
+                );
+              },
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(user.photo),
                 ),
-              );
-            },
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(user.photo),
+                title: Text(user.name),
+                subtitle: Text(user.email),
               ),
-              title: Text(user.name),
-              subtitle: Text(user.email),
-            ),
-          );
+            );
+          }
         },
       ),
     );

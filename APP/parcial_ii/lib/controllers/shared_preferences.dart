@@ -27,4 +27,20 @@ class Shared {
     }
     await storageSahred.setString("photo", photo);
   }
+
+  static Future<void> printLogginDetails() async {
+    var id = storageSahred.getString('id');
+    var name = storageSahred.getString('name');
+    var email = storageSahred.getString('email');
+    var photo = storageSahred.getString('photo');
+    var role = storageSahred.getString('role');
+    var token = storageSahred.getString('token');
+
+    print('id: $id');
+    print('name: $name');
+    print('email: $email');
+    print('photo: $photo');
+    print('role: $role');
+    print('token: $token');
+  }
 }

@@ -8,6 +8,7 @@ class LoginController {
     final response = await http.post(url, body: {
       'email_usuario': loginData.email,
       'clave': loginData.password,
+      'token_fcm': loginData.tokenFcm
     });
 
     if (response.statusCode == 200) {

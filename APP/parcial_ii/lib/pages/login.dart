@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_final_fields, library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:parcial_ii/exports.dart';
 
@@ -13,46 +13,45 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
+  String _tokenFcm = '';
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Error en el login"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging.instance.getToken().then((token) {
+      setState(() {
+        _tokenFcm = token!;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              const Text(
+                'Inicio de Sesión',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 25),
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'Correo'),
+                decoration: const InputDecoration(
+                  labelText: 'Correo electrónico',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese su correo electronico';
+                    return 'Por favor ingrese su correo electrónico';
                   }
                   return null;
                 },
@@ -60,9 +59,13 @@ class _LoginPageState extends State<LoginPage> {
                   _email = value!;
                 },
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Clave'),
+                decoration: const InputDecoration(
+                  labelText: 'Contraseña',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese su contraseña';
@@ -73,44 +76,39 @@ class _LoginPageState extends State<LoginPage> {
                   _password = value!;
                 },
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-
-                      final loginData = LoginModel(
-                        email: _email,
-                        password: _password,
-                      );
-                      Map<String, dynamic> rta =
-                          await LoginController().login(loginData);
-                      if (rta['status'] == 'success') {
-                        SharedPreferences pref = Shared.storageSahred;
-                        String? valor = pref.getString('token');
-                        print(valor);
-                        //LoginRespModel respModel = rta['respModel'];
-                        /* Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Home(
-                              userLoged: _email,
-                            ),
-                          ),
-                        ); */
-                      } else {
-                        _showErrorDialog(rta['message']);
-                      }
-                    }
-                  },
-                  child: const Text('Login'),
-                ),
-              ),
+              const SizedBox(height: 20),
+              MyElevatedButton(onPressed: sendInfomation),
+              const SizedBox(height: 20),
+              buildAvisoRegister(context),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void sendInfomation() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      final loginData = LoginModel(
+        email: _email,
+        password: _password,
+        tokenFcm: _tokenFcm,
+      );
+      Map<String, dynamic> rta = await LoginController().login(loginData);
+      if (rta['status'] == 'success') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Home(
+              userLoged: _email,
+            ),
+          ),
+        );
+      } else {
+        DialogUtils.showErrorDialog(context, rta['message']);
+      }
+    }
   }
 }

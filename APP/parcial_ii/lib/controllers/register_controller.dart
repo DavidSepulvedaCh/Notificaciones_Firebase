@@ -3,6 +3,8 @@ import 'package:parcial_ii/exports.dart';
 import 'package:http/http.dart' as http;
 
 class RegisterController {
+  String email = "";
+
   Future<Map<String, String>> register(RegisterModel registerData) async {
     Uri url = Uri.http(Params.api, Params.registerURL);
     final response = await http.post(
@@ -21,6 +23,9 @@ class RegisterController {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['code'] == "OK") {
+        LoginRespModel respModel =
+            LoginRespModel.fromJson(data['loginRespModel']);
+        await Shared.setLogginDetails(respModel);
         return {
           'status': 'success',
           'message': data['message'],
