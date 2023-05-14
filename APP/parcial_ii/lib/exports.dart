@@ -23,3 +23,5 @@ export 'package:parcial_ii/widgets/dialogs.dart';
 export 'package:parcial_ii/widgets/btn_login.dart';
 export 'package:parcial_ii/controllers/verify_token.dart';
 export 'package:parcial_ii/logged.dart';
+export 'package:image_picker/image_picker.dart';
+export 'package:parcial_ii/controllers/up_img.dart';

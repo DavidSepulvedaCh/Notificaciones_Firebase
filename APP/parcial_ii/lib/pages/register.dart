@@ -1,4 +1,6 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
+import 'dart:io';
 
 import '../exports.dart';
 
@@ -18,9 +20,13 @@ class _RegisterState extends State<Register> {
   late String? _cargo;
   late String? _token;
   late String? _password;
-  final String _image = "https://bit.ly/3VFd1jO";
+  String? _image;
   late String? _phone;
   late String? tk;
+
+  File? fileImg;
+  final ImagePicker picker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +35,48 @@ class _RegisterState extends State<Register> {
         _token = token;
       });
     });
+    _image = "https://bit.ly/3VFd1jO";
+  }
+
+  void options() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Editar desde galeria'),
+                onTap: () async {
+                  final pickedFile =
+                      await picker.pickImage(source: ImageSource.gallery);
+                  setState(() async {
+                    fileImg = File(pickedFile!.path);
+                    _image = await UpImage.uploadImageToCloudinary(fileImg!);
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Editar desde camara'),
+                onTap: () async {
+                  final pickedFile =
+                      await picker.pickImage(source: ImageSource.camera);
+                  setState(() async {
+                    fileImg = File(pickedFile!.path);
+                    _image = await UpImage.uploadImageToCloudinary(fileImg!);
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -53,11 +101,12 @@ class _RegisterState extends State<Register> {
                 const SizedBox(height: 30),
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(_image),
+                  backgroundImage: NetworkImage(
+                      _image!), // aquí puedes agregar la URL de una imagen de red que quieras mostrar
                   child: IconButton(
                     icon: const Icon(Icons.camera_alt),
                     onPressed: () {
-                      // agregar código para seleccionar una imagen
+                      options();
                     },
                   ),
                 ),
@@ -166,7 +215,8 @@ class _RegisterState extends State<Register> {
       );
       RegisterController().register(registerData).then((result) {
         if (result['status'] == 'success') {
-          DialogUtils.showSuccessDialog(context, result['message']!);
+          DialogUtils.showSuccessDialog(
+              context, "Registro exitoso", result['message']!);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -176,7 +226,7 @@ class _RegisterState extends State<Register> {
             ),
           );
         } else {
-          DialogUtils.showErrorDialog(context, result['message']!);
+          DialogUtils.showErrorDialog(context, "Error", result['message']!);
         }
       }).catchError((error) {
         // Manejar el error

@@ -36,6 +36,41 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void showSuccessDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: const Text("Salir"),
+              onPressed: () async {
+                await Shared.setUp();
+                await Shared.storageSahred.clear();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  ),
+                );
+              },
+            ),
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () async {
+                await Shared.setUp();
+                await Shared.storageSahred.clear();
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,12 +83,9 @@ class _HomeState extends State<Home> {
             icon: const Icon(Icons.logout_outlined),
             onPressed: (() async {
               await Shared.printLogginDetails();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LoginPage(),
-                ),
-              );
+              showSuccessDialog(context, "Cerrar Sesión",
+                  "Seguro que quieres cerrar sesión?");
+              /*  */
             }),
           )
         ],
@@ -63,7 +95,6 @@ class _HomeState extends State<Home> {
         itemBuilder: (context, index) {
           final user = _users[index];
           if (user.name == widget.userLoged || user.email == widget.userLoged) {
-            // Exclude the currently logged-in user from the list
             return Container();
           } else {
             return GestureDetector(

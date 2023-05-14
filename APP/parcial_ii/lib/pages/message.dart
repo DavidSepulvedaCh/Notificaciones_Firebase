@@ -115,9 +115,11 @@ class _SendMessageViewState extends State<SendMessageView> {
         idRes: _user.id);
     SendMessage().sendMessage(messageData).then((result) {
       if (result['status'] == 'success') {
-        DialogUtils.showSuccessDialog(context, result['message']!);
+        DialogUtils.showSuccessDialog(
+            context, "Mensaje enviado", result['message']!);
       } else {
-        DialogUtils.showErrorDialog(context, result['message']!);
+        DialogUtils.showErrorDialog(
+            context, "Error en en mensaje", result['message']!);
       }
     }).catchError((error) {
       print(error.toString());

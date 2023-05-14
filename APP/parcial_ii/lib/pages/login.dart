@@ -123,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       } else {
-        DialogUtils.showErrorDialog(context, rta['message']);
+        DialogUtils.showErrorDialog(context, "Error", rta['message']);
       }
     }
   }
