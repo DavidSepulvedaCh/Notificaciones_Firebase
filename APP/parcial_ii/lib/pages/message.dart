@@ -26,46 +26,6 @@ class _SendMessageViewState extends State<SendMessageView> {
     remitente = widget.rem;
   }
 
-  void _showSuccessDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Envio exitoso"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Error en el envio del mensaje"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,9 +115,9 @@ class _SendMessageViewState extends State<SendMessageView> {
         idRes: _user.id);
     SendMessage().sendMessage(messageData).then((result) {
       if (result['status'] == 'success') {
-        _showSuccessDialog(result['message']!);
+        DialogUtils.showSuccessDialog(context, result['message']!);
       } else {
-        _showErrorDialog(result['message']!);
+        DialogUtils.showErrorDialog(context, result['message']!);
       }
     }).catchError((error) {
       print(error.toString());

@@ -1,6 +1,7 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously
 
 import 'package:parcial_ii/exports.dart';
+import 'package:parcial_ii/pages/login.dart';
 
 class Home extends StatefulWidget {
   final String userLoged;
@@ -47,6 +48,12 @@ class _HomeState extends State<Home> {
             icon: const Icon(Icons.logout_outlined),
             onPressed: (() async {
               await Shared.printLogginDetails();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ),
+              );
             }),
           )
         ],

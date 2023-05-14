@@ -77,6 +77,7 @@ class _RegisterState extends State<Register> {
                 ),
                 const SizedBox(height: 15),
                 TextFormField(
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Numero telefonico',

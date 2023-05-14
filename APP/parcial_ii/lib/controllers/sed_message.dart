@@ -20,7 +20,7 @@ class SendMessage {
       if (data['code'] == 'OK') {
         return {'status': 'success', 'message': data['message']};
       } else {
-        return {'status': 'success', 'message': data['message']};
+        return {'status': 'error', 'message': data['message']};
       }
     } else {
       throw Exception('Error al enviar el mensaje');

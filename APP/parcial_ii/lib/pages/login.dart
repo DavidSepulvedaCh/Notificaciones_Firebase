@@ -6,6 +6,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -14,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
   String _tokenFcm = '';
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -21,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     FirebaseMessaging.instance.getToken().then((token) {
       setState(() {
         _tokenFcm = token!;
+        _textEditingController.text = _tokenFcm;
       });
     });
   }
@@ -43,6 +46,19 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 25),
+              /* TextField(
+                readOnly: true,
+                onTap: () {
+                  Clipboard.setData(
+                      ClipboardData(text: _textEditingController.text));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Texto copiado al portapapeles'),
+                  ));
+                },
+                controller: _textEditingController,
+                decoration: const InputDecoration(labelText: 'Texto'),
+              ), */
+              const SizedBox(height: 20),
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(

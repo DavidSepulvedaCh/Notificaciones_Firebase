@@ -27,25 +27,28 @@ class ChatHeader extends StatelessWidget {
           backgroundImage: NetworkImage(imageUrl),
         ),
         const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              name,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+        Flexible(
+          flex: 1,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            Text(
-              email,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.white,
+              Text(
+                email,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

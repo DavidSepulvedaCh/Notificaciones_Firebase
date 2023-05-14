@@ -4,4 +4,5 @@ class Params {
   static const String loginURL = "/backend/login.php";
   static const String messageURL = "/backend/sendMessage.php";
   static const String getUsersURL = "/backend/getUsers.php";
+  static const String verifyToken = "/backend/validateToken.php";
 }

@@ -8,6 +8,16 @@ use \Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
 
 
+class ValidateToken
+{
+    public $code = "";
+    public $message = "";
+}
+
+$resp = new ValidateToken;
+$resp->code = "OK";
+$resp->message = "Token valido";
+
 $jwt = $_POST['token'];
 $key = $_ENV['TOKEN_KEY'];
 
@@ -35,13 +45,22 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $db_user_name = $row['nombre_completo'];
     $db_user_email = $row['email'];
+    if ($user_name == $db_user_name && $user_email == $db_user_email) {
+        $resp->code = "OK";
+        $resp->message = "JWT Valido";
+    } else {
+        $resp->code = "Err";
+        $resp->message = "JWT invalido, no coinciden las credenciales.";
+    }
 } else {
     echo 'Usuario no encontrado';
     exit;
 }
 
 
-echo "JWT válido";
+$myJSON = json_encode($resp);
+header('Content-Type: application/json');
+echo json_encode($resp);
 
 
 ?>

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:parcial_ii/exports.dart';
 
 class Shared {
@@ -5,6 +7,17 @@ class Shared {
 
   static Future<void> setUp() async {
     storageSahred = await SharedPreferences.getInstance();
+  }
+
+  static Future<Object> verifyLogged() async {
+    bool tokenExist = storageSahred.containsKey('token');
+
+    if (tokenExist) {
+      String token = storageSahred.getString('token') ?? 'null';
+      return await VerifyToken().verifyToken(token);
+    } else {
+      return "error";
+    }
   }
 
   static Future<void> setLogginDetails(LoginRespModel model) async {

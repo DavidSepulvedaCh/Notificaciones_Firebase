@@ -16,8 +16,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Parcial_II',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
+      initialRoute: '/verifyLogin',
       routes: {
+        '/verifyLogin': (context) => const Logged(),
         '/register': (context) => const Register(),
         '/login': (context) => const LoginPage(),
       },
