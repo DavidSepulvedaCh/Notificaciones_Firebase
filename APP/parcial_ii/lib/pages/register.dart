@@ -1,14 +1,10 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously
-
 import 'dart:io';
-
 import '../exports.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _RegisterState createState() => _RegisterState();
 }
 
@@ -36,10 +32,11 @@ class _RegisterState extends State<Register> {
       });
     });
     _image = "https://bit.ly/3VFd1jO";
+    fileImg = null; // Agrega esta línea
   }
 
-  void options() {
-    showModalBottomSheet(
+  void options() async {
+    final pickedFile = await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return SafeArea(
@@ -52,9 +49,13 @@ class _RegisterState extends State<Register> {
                 onTap: () async {
                   final pickedFile =
                       await picker.pickImage(source: ImageSource.gallery);
-                  setState(() async {
-                    fileImg = File(pickedFile!.path);
-                    _image = await UpImage.uploadImageToCloudinary(fileImg!);
+                  setState(() {
+                    if (pickedFile != null) {
+                      fileImg = File(pickedFile.path);
+                      UpImage.uploadImageToCloudinary(fileImg!).then((image) {
+                        _image = image;
+                      });
+                    }
                   });
                   Navigator.pop(context);
                 },
@@ -65,9 +66,13 @@ class _RegisterState extends State<Register> {
                 onTap: () async {
                   final pickedFile =
                       await picker.pickImage(source: ImageSource.camera);
-                  setState(() async {
-                    fileImg = File(pickedFile!.path);
-                    _image = await UpImage.uploadImageToCloudinary(fileImg!);
+                  setState(() {
+                    if (pickedFile != null) {
+                      fileImg = File(pickedFile.path);
+                      UpImage.uploadImageToCloudinary(fileImg!).then((image) {
+                        _image = image;
+                      });
+                    }
                   });
                   Navigator.pop(context);
                 },
@@ -99,15 +104,41 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage(
-                      _image!), // aquí puedes agregar la URL de una imagen de red que quieras mostrar
-                  child: IconButton(
-                    icon: const Icon(Icons.camera_alt),
-                    onPressed: () {
-                      options();
-                    },
+                Container(
+                  height: 130,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 2,
+                    ),
+                    image: DecorationImage(
+                      fit: BoxFit.scaleDown,
+                      image: fileImg != null
+                          ? FileImage(fileImg!)
+                          : NetworkImage(_image!) as ImageProvider<Object>,
+                    ),
+                  ),
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 80),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color.fromARGB(255, 6, 34, 82),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            options();
+                          },
+                          icon: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
